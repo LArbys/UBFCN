@@ -12,4 +12,4 @@ max_iter: 100000
 weight_decay: 0.0005
 snapshot: 4000
 snapshot_prefix: "/data/vgenty/fcn"
-test_initialization: false
+#test_initialization: false

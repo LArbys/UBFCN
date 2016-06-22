@@ -7,7 +7,7 @@ layer {
   top: "label"
 
   root_data_param {
-    batch_size: 2
+    batch_size: 32
     filler_config: "train_filler.cfg"
     filler_name: "Train"
   }
@@ -164,57 +164,79 @@ layer {
   }
 }
 layer {
-  name: "fc6"
+  name: "fc6_"
   type: "Convolution"
   bottom: "pool5"
-  top: "fc6"
+  top: "fc6_"
   convolution_param {
+
     num_output: 4096
     pad: 0
     kernel_size: 6
     group: 1
     stride: 1
+
+
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+
   }
 }
 layer {
-  name: "relu6"
+  name: "relu6_"
   type: "ReLU"
-  bottom: "fc6"
-  top: "fc6"
+  bottom: "fc6_"
+  top: "fc6_"
 }
 layer {
-  name: "drop6"
+  name: "drop6_"
   type: "Dropout"
-  bottom: "fc6"
-  top: "fc6"
+  bottom: "fc6_"
+  top: "fc6_"
   dropout_param {
     dropout_ratio: 0.5
   }
 }
 layer {
-  name: "fc7"
+  name: "fc7_"
   type: "Convolution"
-  bottom: "fc6"
-  top: "fc7"
+  bottom: "fc6_"
+  top: "fc7_"
   convolution_param {
     num_output: 4096
     pad: 0
     kernel_size: 1
     group: 1
     stride: 1
+
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+    bias_filler {
+      type: "constant"
+      value: 0.1
+    }
+
   }
 }
 layer {
-  name: "relu7"
+  name: "relu7_"
   type: "ReLU"
-  bottom: "fc7"
-  top: "fc7"
+  bottom: "fc7_"
+  top: "fc7_"
 }
 layer {
-  name: "drop7"
+  name: "drop7_"
   type: "Dropout"
-  bottom: "fc7"
-  top: "fc7"
+  bottom: "fc7_"
+  top: "fc7_"
   dropout_param {
     dropout_ratio: 0.5
   }
@@ -222,7 +244,7 @@ layer {
 layer {
   name: "score_fr"
   type: "Convolution"
-  bottom: "fc7"
+  bottom: "fc7_"
   top: "score_fr"
   param {
     lr_mult: 1
@@ -258,6 +280,12 @@ layer {
     bias_term: false
     kernel_size: 63
     stride: 32
+
+    weight_filler {
+      type: "gaussian"
+      std: 0.01
+    }
+
   }
 }
 layer {
@@ -272,11 +300,11 @@ layer {
   }
 }
 layer {
-  name: "loss"
+  name: "loss_"
   type: "SoftmaxWithLoss"
   bottom: "score"
   bottom: "label"
-  top: "loss"
+  top: "loss_"
   loss_param {
     # ignore_label: 255
     # ignore_label: 255
