@@ -1,0 +1,18 @@
+    [95m[NORMAL][00m [0m [94m<TrainProcessDriver::configure>[00m Instantiating Process ID=0 Type: SegFiller w/ Name: SegFiller
+filling type 3
+i =  0
+i+1 =  1
+filling type 4
+i =  1
+i+1 =  2
+filling type 6
+i =  2
+i+1 =  3
+filling type 8
+i =  3
+i+1 =  4
+filling type 9
+i =  4
+i+1 =  5
+    [95m[NORMAL][00m [0m [94m<TrainIOManager::prepare_input>[00m Opening a file in READ mode: /stage/drinkingkazu/production/v03/hires_filter/hires_filter_train_copy1.root
+    [95m[NORMAL][00m [0m [94m<TrainIOManager::initialize>[00m Prepared input with 110039 entries...
