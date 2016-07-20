@@ -3,3 +3,7 @@
 *.o
 *.ipynb
 *.png
+*.tar
+*.err
+*.out
+*.log

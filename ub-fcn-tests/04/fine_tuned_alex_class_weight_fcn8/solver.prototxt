@@ -19,6 +19,6 @@ iter_size: 1
 max_iter: 100000
 weight_decay: 0.0005
 snapshot: 4000
-snapshot_prefix: "fcn"
+snapshot_prefix: "fcn_class_weight"
 #test_initialization: false
 #debug_info: true

@@ -7,7 +7,7 @@ layer {
   top: "label"
 
   root_data_param {
-    batch_size: 32
+    batch_size: 8
     filler_config: "train_filler.cfg"
     filler_name: "Train"
   }
@@ -84,7 +84,7 @@ layer {
   pooling_param {
     pool: MAX
     kernel_size: 3
-    stride: 2
+    stride: 1
   }
 }
 layer {
@@ -269,10 +269,10 @@ layer {
   }
 }
 layer {
-  name: "upscore"
+  name: "upscore2"
   type: "Deconvolution"
   bottom: "score_fr"
-  top: "upscore"
+  top: "upscore2"
  param {
    lr_mult: 1
    decay_mult: 1
@@ -282,8 +282,11 @@ layer {
     num_output: 6 #5classes+1background
 
     bias_term: false
-    kernel_size: 32
-    stride: 16
+    #kernel_size: 32
+    #stride: 16
+
+    kernel_size: 2#8
+    stride: 1#4
       
    weight_filler {
       type: "xavier"
@@ -293,14 +296,84 @@ layer {
 }
 
 layer {
+  name: "score_pool2"
+  type: "Convolution"
+  bottom: "norm2"
+  top: "score_pool2"
+
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+
+  convolution_param {
+    num_output: 6
+    pad: 0
+    kernel_size: 1
+    weight_filler {
+      type: "xavier"
+   }
+  }
+}
+
+layer {
+  name: "score_pool2c"
+  type: "Crop"
+  bottom: "score_pool2"
+  bottom: "upscore2"
+  top: "score_pool2c"
+  crop_param {
+    axis: 2
+    offset: 4#9
+  }
+}
+
+layer {
+  name: "fuse_pool2"
+  type: "Eltwise"
+  bottom: "upscore2"
+  bottom: "score_pool2c"
+  top: "fuse_pool2"
+
+  eltwise_param {
+    operation: SUM
+  }
+
+}
+layer {
+  name: "upscore8"
+  type: "Deconvolution"
+  bottom: "fuse_pool2"
+  top: "upscore8"
+  param {
+    lr_mult: 1
+  }
+  convolution_param {
+    num_output: 6
+    bias_term: false
+    kernel_size: 16
+    stride: 8
+
+    weight_filler {
+      type: "xavier"
+    }
+
+  }
+}
+
+layer {
   name: "score"
   type: "Crop"
-  bottom: "upscore"
+  bottom: "upscore8"
   bottom: "data"
   top: "score"
   crop_param {
     axis: 2
-    offset: 18#27
+    offset: 27#18
   }
 }
 
