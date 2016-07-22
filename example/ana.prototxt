@@ -1,0 +1,327 @@
+name: "FCN32AlexNet"
+
+layer {
+  name: "data"
+  type: "ROOTData"
+  top: "data"
+  top: "label"
+
+  root_data_param {
+    batch_size: 1
+    filler_config: "ana_filler.cfg"
+    filler_name: "Ana"
+    use_thread: false
+  }
+}
+
+layer {
+  name: "conv1"
+  type: "Convolution"
+  bottom: "data"
+  top: "conv1"
+  convolution_param {
+    num_output: 96
+    pad: 100
+    kernel_size: 11
+    group: 1
+    stride: 4
+  }
+}
+
+layer {
+  name: "relu1"
+  type: "ReLU"
+  bottom: "conv1"
+  top: "conv1"
+}
+
+layer {
+  name: "pool1"
+  type: "Pooling"
+  bottom: "conv1"
+  top: "pool1"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+
+layer {
+  name: "norm1"
+  type: "LRN"
+  bottom: "pool1"
+  top: "norm1"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
+  name: "conv2"
+  type: "Convolution"
+  bottom: "norm1"
+  top: "conv2"
+  convolution_param {
+    num_output: 256
+    pad: 2
+    kernel_size: 5
+    group: 2
+    stride: 1
+  }
+}
+layer {
+  name: "relu2"
+  type: "ReLU"
+  bottom: "conv2"
+  top: "conv2"
+}
+layer {
+  name: "pool2"
+  type: "Pooling"
+  bottom: "conv2"
+  top: "pool2"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "norm2"
+  type: "LRN"
+  bottom: "pool2"
+  top: "norm2"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+layer {
+  name: "conv3"
+  type: "Convolution"
+  bottom: "norm2"
+  top: "conv3"
+  convolution_param {
+    num_output: 384
+    pad: 1
+    kernel_size: 3
+    group: 1
+    stride: 1
+  }
+}
+layer {
+  name: "relu3"
+  type: "ReLU"
+  bottom: "conv3"
+  top: "conv3"
+}
+layer {
+  name: "conv4"
+  type: "Convolution"
+  bottom: "conv3"
+  top: "conv4"
+  convolution_param {
+    num_output: 384
+    pad: 1
+    kernel_size: 3
+    group: 2
+    stride: 1
+  }
+}
+layer {
+  name: "relu4"
+  type: "ReLU"
+  bottom: "conv4"
+  top: "conv4"
+}
+layer {
+  name: "conv5"
+  type: "Convolution"
+  bottom: "conv4"
+  top: "conv5"
+  convolution_param {
+    num_output: 256
+    pad: 1
+    kernel_size: 3
+    group: 2
+    stride: 1
+  }
+}
+layer {
+  name: "relu5"
+  type: "ReLU"
+  bottom: "conv5"
+  top: "conv5"
+}
+layer {
+  name: "pool5"
+  type: "Pooling"
+  bottom: "conv5"
+  top: "pool5"
+  pooling_param {
+    pool: MAX
+    kernel_size: 3
+    stride: 2
+  }
+}
+layer {
+  name: "fc6_"
+  type: "Convolution"
+  bottom: "pool5"
+  top: "fc6_"
+  convolution_param {
+
+    num_output: 4096
+    pad: 0
+    kernel_size: 6
+    group: 1
+    stride: 1
+
+   weight_filler {
+      type: "xavier"
+   }
+
+  }
+}
+layer {
+  name: "relu6_"
+  type: "ReLU"
+  bottom: "fc6_"
+  top: "fc6_"
+}
+layer {
+  name: "drop6_"
+  type: "Dropout"
+  bottom: "fc6_"
+  top: "fc6_"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "fc7_"
+  type: "Convolution"
+  bottom: "fc6_"
+  top: "fc7_"
+  convolution_param {
+    num_output: 4096
+    pad: 0
+    kernel_size: 1
+    group: 1
+    stride: 1
+
+   weight_filler {
+      type: "xavier"
+   }
+  }
+}
+layer {
+  name: "relu7_"
+  type: "ReLU"
+  bottom: "fc7_"
+  top: "fc7_"
+}
+layer {
+  name: "drop7_"
+  type: "Dropout"
+  bottom: "fc7_"
+  top: "fc7_"
+  dropout_param {
+    dropout_ratio: 0.5
+  }
+}
+layer {
+  name: "score_fr"
+  type: "Convolution"
+  bottom: "fc7_"
+  top: "score_fr"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+
+    #num_output: 21
+
+    num_output: 6 # 5classes+1background
+
+    pad: 0
+    kernel_size: 1
+
+
+   weight_filler {
+      type: "xavier"
+   }
+
+  }
+}
+layer {
+  name: "upscore"
+  type: "Deconvolution"
+  bottom: "score_fr"
+  top: "upscore"
+ param {
+   lr_mult: 1
+   decay_mult: 1
+ }
+
+# param {
+#   lr_mult: 2
+#   decay_mult: 0
+# }
+
+
+  convolution_param {
+    # num_output: 21
+
+    num_output: 6 #5classes+1background
+
+    bias_term: false
+    kernel_size: 63
+    stride: 32
+      
+   weight_filler {
+      type: "xavier"
+   }
+      
+  }
+}
+
+layer {
+  name: "score"
+  type: "Crop"
+  bottom: "upscore"
+  bottom: "data"
+  top: "score"
+  crop_param {
+    axis: 2
+    offset: 18
+  }
+}
+
+layer {
+  name: "loss_"
+  #type: "SoftmaxWithLoss"
+  type: "Softmax"
+  bottom: "score"
+  top: "loss_"
+  loss_param {
+    # ignore_label: 255
+
+    # why is vic commenting this?
+    # http://host.robots.ox.ac.uk/pascal/VOC/voc2012/htmldoc/
+    # see 2.6
+    # now read
+    # https://groups.google.com/forum/#!topic/caffe-users/xAiifGi1nEc
+    # evan explains that 255 in voc is ambiguous regions in the image
+
+    normalize: true
+  }
+}
