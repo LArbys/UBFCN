@@ -484,11 +484,11 @@ layer {
     normalize: true
 
     class_loss_weights: 1                # class 0
-    class_loss_weights: 100              # class 1
-    class_loss_weights: 100              # class 2
-    class_loss_weights: 100              # class 3
-    class_loss_weights: 100              # class 4
-    class_loss_weights: 100              # class 5
+    class_loss_weights: 50              # class 1
+    class_loss_weights: 50              # class 2
+    class_loss_weights: 50              # class 3
+    class_loss_weights: 50              # class 4
+    class_loss_weights: 50              # class 5
 
   }
 }

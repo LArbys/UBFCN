@@ -10,7 +10,7 @@ layer {
     batch_size: 48
       filler_config: "train_filler.cfg"
       filler_name: "Train"
-      }
+    }
 }
 
 layer {
@@ -367,7 +367,6 @@ layer {
   }
 }
 
-
 layer {
   name: "fuse_pool2"
   type: "Eltwise"
@@ -378,98 +377,34 @@ layer {
     operation: SUM
   }
 }
-
-
 layer {
-  name: "upscore_pool2"
+  name: "upscore16"
   type: "Deconvolution"
   bottom: "fuse_pool2"
-  top: "upscore_pool2"
+  top: "upscore16"
   param {
     lr_mult: 1
   }
   convolution_param {
     num_output: 6
     bias_term: false
-    kernel_size: 4
-    stride: 2
-    weight_filler {
-      type: "xavier"
-	}
-  }
-}
-
-
-layer {
-  name: "score_pool1"
-  type: "Convolution"
-  bottom: "norm1"
-  top: "score_pool1"
-  param {
-    lr_mult: 1
-    decay_mult: 1
-  }
-  param {
-    lr_mult: 2
-    decay_mult: 0
-  }
-  convolution_param {
-    num_output: 6
-    pad: 0
-    kernel_size: 1
-       weight_filler {
+    kernel_size: 32
+    stride: 16
+   weight_filler {
       type: "xavier"
    }
   }
 }
-layer {
-  name: "score_pool1c"
-  type: "Crop"
-  bottom: "score_pool1"
-  bottom: "upscore_pool2"
-  top: "score_pool1c"
-  crop_param {
-    axis: 2
-    offset: 9
-  }
-}
-layer {
-  name: "fuse_pool1"
-  type: "Eltwise"
-  bottom: "upscore_pool2"
-  bottom: "score_pool1c"
-  top: "fuse_pool1"
-  eltwise_param {
-    operation: SUM
-  }
-}
-layer {
-  name: "upscore8"
-  type: "Deconvolution"
-  bottom: "fuse_pool1"
-  top: "upscore8"
-  param {
-    lr_mult: 1
-  }
-  convolution_param {
-    num_output: 6
-    bias_term: false
-    kernel_size: 16
-    stride: 8
-       weight_filler {
-      type: "xavier"
-   }
-  }
-}
+
 layer {
   name: "score"
   type: "Crop"
-  bottom: "upscore8"
+  bottom: "upscore16"
   bottom: "data"
   top: "score"
   crop_param {
     axis: 2
-    offset: 31
+    offset: 27 #18
   }
 }
 
@@ -480,15 +415,23 @@ layer {
   bottom: "label"
   top: "loss_"
   loss_param {
+    # ignore_label: 255
+
+    # why is vic commenting this?
+    # http://host.robots.ox.ac.uk/pascal/VOC/voc2012/htmldoc/
+    # see 2.6
+    # now read
+    # https://groups.google.com/forum/#!topic/caffe-users/xAiifGi1nEc
+    # evan explains that 255 in voc is ambiguous regions in the image
 
     normalize: true
 
-    class_loss_weights: 1                # class 0
+   class_loss_weights: 1                # class 0
     class_loss_weights: 100              # class 1
     class_loss_weights: 100              # class 2
     class_loss_weights: 100              # class 3
     class_loss_weights: 100              # class 4
     class_loss_weights: 100              # class 5
 
-  }
+      }
 }

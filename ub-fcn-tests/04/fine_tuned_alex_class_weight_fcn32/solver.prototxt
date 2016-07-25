@@ -14,11 +14,11 @@ momentum: 0.9
 # gradient accumulation (https://groups.google.com/forum/#!topic/caffe-users/PMbycfbpKcY)
 # A weight update / iteration is done for batch_size * iter_size inputs at a time. 
 # Each solver iteration reported is accumulated by running `iter_size` calls to forward + backward. See
-iter_size: 1
+iter_size: 2
 
 max_iter: 100000
 weight_decay: 0.0005
 snapshot: 4000
-snapshot_prefix: "fcn_class_weight"
+snapshot_prefix: "fcn_32classweight"
 #test_initialization: false
 #debug_info: true

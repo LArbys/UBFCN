@@ -6,7 +6,7 @@ display: 1
 
 lr_policy: "fixed"
 # lr for normalized softmax
-base_lr: 0.001
+base_lr: 0.01
 # standard momentum
 momentum: 0.9
 
