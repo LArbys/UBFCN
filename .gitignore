@@ -8,3 +8,5 @@
 *.out
 *.log
 out*
+*vgenty.log.INFO*
+ana
