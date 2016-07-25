@@ -7,3 +7,4 @@
 *.err
 *.out
 *.log
+out*
