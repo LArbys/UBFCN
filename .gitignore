@@ -10,3 +10,5 @@
 out*
 *vgenty.log.INFO*
 ana
+*.caffemodel.h5
+*.solverstate.h5

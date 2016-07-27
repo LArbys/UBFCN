@@ -1,0 +1,22 @@
+train_net: "train.prototxt"
+iter_size: 1
+
+base_lr: 0.0003
+#base_lr: 0.0001
+#base_lr: 0.00005
+#base_lr: 0.00001
+#base_lr:  0.000005
+
+momentum: 0.0
+weight_decay: 0.001
+lr_policy: "inv"
+gamma: 0.00001
+power: 0.75
+display: 1
+max_iter: 100000
+snapshot: 250
+snapshot_prefix: "snapshot_rmsprop_vgg_fcn16_weights"
+snapshot_format: HDF5
+solver_mode: GPU
+type: "RMSProp"
+rms_decay: 0.90
