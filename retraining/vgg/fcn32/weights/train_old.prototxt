@@ -1,5 +1,4 @@
 name: "VGG_16_UB_DECONV_Train"
-
 layer {
   name: "data"
   type: "ROOTData"
@@ -7,7 +6,7 @@ layer {
   top: "label"
 
   root_data_param {
-    batch_size: 12
+    batch_size: 32
     filler_config: "train_filler.cfg"
     filler_name: "Train"
   }
@@ -30,9 +29,9 @@ layer {
 
   convolution_param {
     num_output: 64
-    pad: 1
-    kernel_size: 3
-    stride: 1
+    pad: 2
+    kernel_size: 5
+    stride: 2
     weight_filler {
       type: "msra"
     }
@@ -61,7 +60,7 @@ layer {
   }
   convolution_param {
     num_output: 64
-    pad: 1
+    pad: 2
     kernel_size: 3
     stride: 1
     weight_filler {
@@ -453,9 +452,10 @@ layer {
   pooling_param {
     pool: MAX
     kernel_size: 2
-    stride: 2
+    stride: 1
   }
 }
+
 
 layer {
   name: "score_fr"
@@ -533,3 +533,4 @@ layer {
    class_loss_weights: 100              # class 5
   }
 }
+

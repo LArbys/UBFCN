@@ -2,10 +2,6 @@
 train_net: "train.prototxt"
 iter_size: 1
 
-#test_net:  "alex_test.prototxt"
-#test_iter: 100
-#test_interval: 100
-
 base_lr: 0.0003
 #base_lr: 0.0001
 #base_lr: 0.00005
@@ -20,7 +16,7 @@ power: 0.75
 display: 1
 max_iter: 100000
 snapshot: 250
-snapshot_prefix: "snapshot_rmsprop_vgg_fcn16_weights"
+snapshot_prefix: "snapshot_rmsprop_resnet50_fcn32_weights"
 snapshot_format: HDF5
 solver_mode: GPU
 type: "RMSProp"
