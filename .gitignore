@@ -12,3 +12,4 @@ out*
 ana
 *.caffemodel.h5
 *.solverstate.h5
+*.root
