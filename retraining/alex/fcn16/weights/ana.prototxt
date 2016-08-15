@@ -5,11 +5,11 @@ layer {
     type: "ROOTData"
     top: "data"
     top: "label"
-#batch size 48 for training, 50 for inference
+
     root_data_param {
     batch_size: 50
-      filler_config: "train_filler.cfg"
-      filler_name: "Train"
+      filler_config: "ana_filler.cfg"
+      filler_name: "Ana"
     }
 }
 

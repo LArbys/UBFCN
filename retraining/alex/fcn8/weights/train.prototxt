@@ -5,9 +5,9 @@ layer {
     type: "ROOTData"
     top: "data"
     top: "label"
-
+#batch_size 48 during training, 50 during inference
     root_data_param {
-    batch_size: 48
+    batch_size: 50
       filler_config: "train_filler.cfg"
       filler_name: "Train"
       }

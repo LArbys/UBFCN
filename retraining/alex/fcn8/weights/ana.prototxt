@@ -5,12 +5,12 @@ layer {
     type: "ROOTData"
     top: "data"
     top: "label"
-#batch size 48 for training, 50 for inference
+
     root_data_param {
     batch_size: 50
-      filler_config: "train_filler.cfg"
-      filler_name: "Train"
-    }
+      filler_config: "ana_filler.cfg"
+      filler_name: "Ana"
+      }
 }
 
 layer {
@@ -317,6 +317,15 @@ layer {
    weight_filler {
       type: "xavier"
    }
+      
+#   weight_filler {
+#      type: "gaussian"
+#      std: 0.01
+#    }
+#    bias_filler {
+#      type: "constant"
+#      value: 0.1
+#    }
 
   }
 }
@@ -358,6 +367,7 @@ layer {
   }
 }
 
+
 layer {
   name: "fuse_pool2"
   type: "Eltwise"
@@ -368,34 +378,98 @@ layer {
     operation: SUM
   }
 }
+
+
 layer {
-  name: "upscore16"
+  name: "upscore_pool2"
   type: "Deconvolution"
   bottom: "fuse_pool2"
-  top: "upscore16"
+  top: "upscore_pool2"
   param {
     lr_mult: 1
   }
   convolution_param {
     num_output: 6
     bias_term: false
-    kernel_size: 32
-    stride: 16
-   weight_filler {
+    kernel_size: 4
+    stride: 2
+    weight_filler {
+      type: "xavier"
+	}
+  }
+}
+
+
+layer {
+  name: "score_pool1"
+  type: "Convolution"
+  bottom: "norm1"
+  top: "score_pool1"
+  param {
+    lr_mult: 1
+    decay_mult: 1
+  }
+  param {
+    lr_mult: 2
+    decay_mult: 0
+  }
+  convolution_param {
+    num_output: 6
+    pad: 0
+    kernel_size: 1
+       weight_filler {
       type: "xavier"
    }
   }
 }
-
+layer {
+  name: "score_pool1c"
+  type: "Crop"
+  bottom: "score_pool1"
+  bottom: "upscore_pool2"
+  top: "score_pool1c"
+  crop_param {
+    axis: 2
+    offset: 9
+  }
+}
+layer {
+  name: "fuse_pool1"
+  type: "Eltwise"
+  bottom: "upscore_pool2"
+  bottom: "score_pool1c"
+  top: "fuse_pool1"
+  eltwise_param {
+    operation: SUM
+  }
+}
+layer {
+  name: "upscore8"
+  type: "Deconvolution"
+  bottom: "fuse_pool1"
+  top: "upscore8"
+  param {
+    lr_mult: 1
+  }
+  convolution_param {
+    num_output: 6
+    bias_term: false
+    kernel_size: 16
+    stride: 8
+       weight_filler {
+      type: "xavier"
+   }
+  }
+}
 layer {
   name: "score"
   type: "Crop"
-  bottom: "upscore16"
+  bottom: "upscore8"
   bottom: "data"
   top: "score"
   crop_param {
     axis: 2
-    offset: 27 #18
+    offset: 31
   }
 }
 
@@ -406,12 +480,15 @@ layer {
   bottom: "label"
   top: "loss_"
   loss_param {
+
     normalize: true
+
     class_loss_weights: 1                # class 0
     class_loss_weights: 100              # class 1
     class_loss_weights: 100              # class 2
     class_loss_weights: 100              # class 3
     class_loss_weights: 100              # class 4
     class_loss_weights: 100              # class 5
-      }
+
+  }
 }
